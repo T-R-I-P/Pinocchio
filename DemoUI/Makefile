@@ -1,7 +1,8 @@
 # Makefile for DemoUI
 CC = g++
 CCFLAGS = -c -Wall -O3 -I../Pinocchio/
-LIBS = -lm -L../Pinocchio/ -lpinocchio -lfltk -lfltk_gl
+#LIBS = -lm -L../Pinocchio/ -lpinocchio -lfltk -lfltk_gl
+LIBS = -lm -L../Pinocchio/ -lpinocchio $(shell fltk-config --ldflags --use-gl) -lGL -lGLU
 
 OBJECTS = demoUI.o MyWindow.o defmesh.o processor.o motion.o filter.o
 
@@ -41,7 +42,7 @@ MyWindow.o: ../Pinocchio/transform.h DisplayMesh.h ../Pinocchio/skeleton.h
 MyWindow.o: ../Pinocchio/graphutils.h
 defmesh.o: defmesh.h ../Pinocchio/attachment.h ../Pinocchio/mesh.h
 defmesh.o: ../Pinocchio/vector.h ../Pinocchio/hashutils.h
-defmesh.o: ../Pinocchio/mathutils.h 
+defmesh.o: ../Pinocchio/mathutils.h
 defmesh.o: ../Pinocchio/Pinocchio.h ../Pinocchio/rect.h
 defmesh.o: ../Pinocchio/skeleton.h ../Pinocchio/graphutils.h
 defmesh.o: ../Pinocchio/transform.h filter.h ../Pinocchio/matrix.h
@@ -50,7 +51,7 @@ defmesh.o: ../Pinocchio/mesh.h motion.h ../Pinocchio/intersector.h
 defmesh.o: ../Pinocchio/vecutils.h
 demoUI.o:  MyWindow.h
 demoUI.o: ../Pinocchio/mesh.h ../Pinocchio/vector.h ../Pinocchio/hashutils.h
-demoUI.o: ../Pinocchio/mathutils.h 
+demoUI.o: ../Pinocchio/mathutils.h
 demoUI.o: ../Pinocchio/Pinocchio.h ../Pinocchio/rect.h
 demoUI.o: ../Pinocchio/transform.h DisplayMesh.h processor.h
 filter.o: filter.h ../Pinocchio/matrix.h ../Pinocchio/mathutils.h
@@ -61,7 +62,7 @@ motion.o: motion.h ../Pinocchio/transform.h ../Pinocchio/vector.h
 motion.o: ../Pinocchio/hashutils.h ../Pinocchio/mathutils.h
 motion.o:  ../Pinocchio/Pinocchio.h
 motion.o: ../Pinocchio/skeleton.h ../Pinocchio/graphutils.h
-motion.o: ../Pinocchio/utils.h 
+motion.o: ../Pinocchio/utils.h
 processor.o:  processor.h MyWindow.h
 processor.o: ../Pinocchio/mesh.h ../Pinocchio/vector.h
 processor.o: ../Pinocchio/hashutils.h ../Pinocchio/mathutils.h

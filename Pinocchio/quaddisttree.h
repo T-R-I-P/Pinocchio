@@ -36,11 +36,11 @@ public:
     template<class Eval> void initFunc(const Eval &eval, const MyRect &rect)
     {
         for(int i = 0; i < (1 << Dim); ++i) {
-            setValue(i, eval(rect.getCorner(i)));
+            this->setValue(i, eval(rect.getCorner(i)));
         }
         return;
     }
-    
+
 private:
 };
 
@@ -61,7 +61,7 @@ public:
         int i;
         const Rect<double, Dim> &rect = node->getRect();
         node->initFunc(eval, rect);
-        
+
         bool nextCropOutside = cropOutside;
         if(cropOutside && level > 0) {
             double center = eval(rect.getCenter());
@@ -71,7 +71,7 @@ public:
             if(center < -len)
                 nextCropOutside = false;
         }
-        
+
         if(level == (32 / Dim))
             return;
         bool doSplit = false;
@@ -153,7 +153,7 @@ private:
 typedef DistData<3>::NodeType OctTreeNode;
 typedef DRootNode<DistData<3>, 3> OctTreeRoot;
 
-template<class RootNode = OctTreeRoot> class OctTreeMaker 
+template<class RootNode = OctTreeRoot> class OctTreeMaker
 {
 public:
     static RootNode *make(const ObjectProjector<3, Tri3Object> &proj, const Mesh &m, double tol)
@@ -208,13 +208,13 @@ private:
             if(!inside[level]) {
                 double d = (*this)(r.getCenter());
                 double diag2 = r.getSize().length() * 0.5;
-            
+
                 if(d >= diag2)
                     inside[level] = 1;
                 else if(d <= -diag2)
                     inside[level] = -1;
             }
-                       
+
             rects[level] = r;
         }
 
@@ -230,10 +230,10 @@ private:
                         ins = -ins;
                 }
             }
-            
+
             return (vec - proj.project(vec)).length() * ins;
         }
-        
+
         mutable map<unsigned int, double> cache;
         const ObjectProjector<3, Tri3Object> &proj;
         Intersector mint;
@@ -241,7 +241,7 @@ private:
         mutable int inside[11];
         mutable int level; //essentially index of last rect
     };
-    
+
     class PointObjDistEval
     {
     public:
