@@ -39,7 +39,7 @@ struct ArgData
         skeleton(HumanSkeleton())
     {
     }
-    
+
     bool stopAtMesh;
     bool stopAfterCircles;
     string filename;
@@ -49,6 +49,7 @@ struct ArgData
     bool noFit;
     Skeleton skeleton;
     string skeletonname;
+    bool outputFbx;
 };
 
 void printUsageAndExit()
@@ -70,7 +71,7 @@ ArgData processArgs(const vector<string> &args)
         printUsageAndExit();
 
     out.filename = args[1];
-    
+
     while(cur < num) {
         string curStr = args[cur++];
         if(curStr == string("-skel")) {
@@ -102,7 +103,7 @@ ArgData processArgs(const vector<string> &args)
             sscanf(args[cur++].c_str(), "%lf", &y);
             sscanf(args[cur++].c_str(), "%lf", &z);
             sscanf(args[cur++].c_str(), "%lf", &deg);
-            
+
             out.meshTransform = Quaternion<>(Vector3(x, y, z), deg * M_PI / 180.) * out.meshTransform;
             continue;
         }
@@ -134,6 +135,10 @@ ArgData processArgs(const vector<string> &args)
             out.motionname = args[cur++];
             continue;
         }
+        if(curStr == string("-outputFbx")) {
+          out.outputFbx = true;
+          continue;
+        }
         cout << "Unrecognized option: " << curStr << endl;
         printUsageAndExit();
     }
@@ -153,8 +158,8 @@ void process(const vector<string> &args, MyWindow *w)
         cout << "Error reading file.  Aborting." << endl;
         exit(0);
         return;
-    }            
-    
+    }
+
     for(i = 0; i < (int)m.vertices.size(); ++i)
         m.vertices[i].pos = a.meshTransform * m.vertices[i].pos;
     m.normalizeBoundingBox();
@@ -221,6 +226,15 @@ void process(const vector<string> &args, MyWindow *w)
             astrm << d << " ";
         }
         astrm << endl;
+    }
+
+    // output format
+    if(a.outputFbx) {
+      cout << "Output FBX" << endl;
+      w->dumpFile();
+      exit(0);
+    }else {
+      cout << "Nothing" << endl;
     }
 
     delete o.attachment;

@@ -51,6 +51,7 @@ public:
     void addMesh(DisplayMesh *inM) { meshes.push_back(inM); }
     void addLine(const LineSegment &l) { lines.push_back(l); }
     void clearLines() { lines.clear(); }
+    void dumpFile();
 
 private:
     bool flatShading, floor, skeleton;
@@ -62,6 +63,7 @@ private:
     void initGL();
     void drawMesh(const Mesh &m, bool flatShading, Vector3 trans = Vector3());
     void drawFloor();
+    void writeFile(const Mesh &m, bool flatShading, Vector3 trans = Vector3());
 };
 
 #endif //MYWINDOW_H

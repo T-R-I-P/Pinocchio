@@ -24,10 +24,12 @@ THE SOFTWARE.
 #include <FL/Fl.H>
 #include "MyWindow.h"
 #include "../Pinocchio/skeleton.h"
+#include <fstream>
 
 static HumanSkeleton human;
 
 MyWindow *win = NULL;
+fstream file;
 
 void idle(void *s)
 {
@@ -80,7 +82,7 @@ int MyWindow::handle(int event) {
             Transform<> cur = Transform<>(Vector3(0.5, 0.5, 0.5)) *
                     Transform<>(scale) *
                     Transform<>(Vector3(-0.5, -0.5, -0.5));
-                
+
             transform = cur * transform;
         }
         return 1;
@@ -154,10 +156,10 @@ void MyWindow::draw() {
     //Transform------
     Vector3 trans = transform.getTrans();
     glTranslated(trans[0], trans[1], -10 + trans[2]);
-    
+
     double scale = transform.getScale();
     glScaled(scale, scale, scale);
-    
+
     Quaternion<> r = transform.getRot();
     double ang = r.getAngle();
     if(fabs(ang) > 1e-6) {
@@ -180,7 +182,7 @@ void MyWindow::draw() {
         if(lightRay[1] == 0)
             lightRay[1] = 1e-5;
         lightRay = -lightRay / lightRay[1];
-            
+
         glDisable(GL_LIGHTING);
         glColor3f(0.1f, 0.1f, 0.1f);
         glPushMatrix();
@@ -188,7 +190,7 @@ void MyWindow::draw() {
         glMultMatrixf(matr);
         glDepthMask(0);
         for(i = 0; i < (int)ms.size(); ++i)
-            drawMesh(*(ms[i]), flatShading);                
+            drawMesh(*(ms[i]), flatShading);
         glDepthMask(1);
         glEnable(GL_LIGHTING);
         glPopMatrix();
@@ -274,11 +276,11 @@ void MyWindow::drawMesh(const Mesh &m, bool flatShading, Vector3 trans)
         else if(i % 3 == 0) {
             const Vector3 &p2 = m.vertices[m.edges[i + 1].vertex].pos;
             const Vector3 &p3 = m.vertices[m.edges[i + 2].vertex].pos;
-        
+
             normal = ((p2 - p) % (p3 - p)).normalize();
             glNormal3d(normal[0], normal[1], normal[2]);
         }
-    
+
         glVertex3d(p[0] + trans[0], p[1] + trans[1], p[2] + trans[2]);
     }
     glEnd();
@@ -331,3 +333,57 @@ void MyWindow::drawFloor()
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 }
+
+void MyWindow::dumpFile() {
+  file.open("DumpFile.dmo", ios::out);
+  int i;
+  vector<const Mesh *> ms(meshes.size());
+  for(i = 0; i < (int)meshes.size(); ++i) {
+      ms[i] = &(meshes[i]->getMesh());
+  }
+
+  for(i = 0; i < (int)meshes.size(); ++i) {
+    this->writeFile(*(ms[i]), false);
+  }
+  file.close();
+}
+
+void MyWindow::writeFile(const Mesh &m, bool flatShading, Vector3 trans) {
+    int i;
+    Vector3 normal;
+
+    cout << "Writing" << endl;
+    for(i = 0; i < (int)m.edges.size(); ++i) {
+        int v = m.edges[i].vertex;
+        const Vector3 &p = m.vertices[v].pos;
+
+        if(!flatShading) {
+            normal = m.vertices[v].normal;
+
+            file << normal[0] << " ";
+            file << normal[1] << " ";
+            file << normal[2];
+            file << endl;
+//            glNormal3d(normal[0], normal[1], normal[2]);
+        }
+        else if(i % 3 == 0) {
+            const Vector3 &p2 = m.vertices[m.edges[i + 1].vertex].pos;
+            const Vector3 &p3 = m.vertices[m.edges[i + 2].vertex].pos;
+
+            normal = ((p2 - p) % (p3 - p)).normalize();
+            file << normal[0] << " ";
+            file << normal[1] << " ";
+            file << normal[2];
+            file << endl;
+
+//            glNormal3d(normal[0], normal[1], normal[2]);
+        }
+
+        file << p[0] + trans[0] << " ";
+        file << p[1] + trans[1] << " ";
+        file << p[2] + trans[2];
+        file << endl;
+//        glVertex3d(p[0] + trans[0], p[1] + trans[1], p[2] + trans[2]);
+    }
+}
+
