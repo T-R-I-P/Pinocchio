@@ -1,6 +1,6 @@
 # Makefile for DemoUI
 CC = g++
-CCFLAGS = -c -Wall -O3 -I../Pinocchio/
+CCFLAGS = -c -Wall -O3 -I../Pinocchio/ -std=c++11
 #LIBS = -lm -L../Pinocchio/ -lpinocchio -lfltk -lfltk_gl
 LIBS = -lm -L../Pinocchio/ -lpinocchio $(shell fltk-config --ldflags --use-gl) -lGL -lGLU
 

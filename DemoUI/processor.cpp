@@ -32,6 +32,9 @@ THE SOFTWARE.
 #include "defmesh.h"
 #include "motion.h"
 
+#include "../Assets/json.hpp"
+using json = nlohmann::json;
+
 struct ArgData
 {
     ArgData() :
@@ -49,7 +52,7 @@ struct ArgData
     bool noFit;
     Skeleton skeleton;
     string skeletonname;
-    bool outputFbx;
+    bool dumpMesh;
 };
 
 void printUsageAndExit()
@@ -135,8 +138,8 @@ ArgData processArgs(const vector<string> &args)
             out.motionname = args[cur++];
             continue;
         }
-        if(curStr == string("-outputFbx")) {
-          out.outputFbx = true;
+        if(curStr == string("-dumpMesh")) {
+          out.dumpMesh = true;
           continue;
         }
         cout << "Unrecognized option: " << curStr << endl;
@@ -162,8 +165,33 @@ void process(const vector<string> &args, MyWindow *w)
 
     for(i = 0; i < (int)m.vertices.size(); ++i)
         m.vertices[i].pos = a.meshTransform * m.vertices[i].pos;
-    m.normalizeBoundingBox();
+//    m.normalizeBoundingBox();
     m.computeVertexNormals();
+
+	/* Adds */
+	int s = m.vertices.size();
+	json j;
+	for(int i = 0; i < s ; ++ i){
+		/* Dump Mesh */
+    json tmp;
+		tmp["pos"] = { m.vertices.at(i).pos[0] ,  m.vertices.at(i).pos[1] , m.vertices.at(i).pos[2] };
+		tmp["normal"] = { m.vertices.at(i).normal[0] ,  m.vertices.at(i).normal[1] , m.vertices.at(i).normal[2] };
+		tmp["edge"] = m.vertices.at(i).edge;
+
+		j.push_back(tmp);
+	}
+
+  if(a.dumpMesh) {
+    fstream file;
+
+    cout << "Dump Mesh" << endl;
+    file.open("mesh.json", ios::out);
+    file << j.dump();
+    file.close();
+  }
+
+
+	/* End of Adds */
 
     Skeleton given = a.skeleton;
     given.scale(a.skelScale * 0.7);
@@ -226,15 +254,6 @@ void process(const vector<string> &args, MyWindow *w)
             astrm << d << " ";
         }
         astrm << endl;
-    }
-
-    // output format
-    if(a.outputFbx) {
-      cout << "Output FBX" << endl;
-      w->dumpFile();
-      exit(0);
-    }else {
-      cout << "Nothing" << endl;
     }
 
     delete o.attachment;
