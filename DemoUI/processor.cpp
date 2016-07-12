@@ -38,7 +38,7 @@ using json = nlohmann::json;
 struct ArgData
 {
     ArgData() :
-        stopAtMesh(false), stopAfterCircles(false), skelScale(1.), noFit(false),
+        stopAtMesh(false), stopAfterCircles(false), skelScale(1.), noFit(false), dumpMesh(false),
         skeleton(HumanSkeleton())
     {
     }
@@ -165,33 +165,32 @@ void process(const vector<string> &args, MyWindow *w)
 
     for(i = 0; i < (int)m.vertices.size(); ++i)
         m.vertices[i].pos = a.meshTransform * m.vertices[i].pos;
-//    m.normalizeBoundingBox();
+    m.normalizeBoundingBox();
     m.computeVertexNormals();
 
-	/* Adds */
-	int s = m.vertices.size();
-	json j;
-	for(int i = 0; i < s ; ++ i){
-		/* Dump Mesh */
-    json tmp;
-		tmp["pos"] = { m.vertices.at(i).pos[0] ,  m.vertices.at(i).pos[1] , m.vertices.at(i).pos[2] };
-		tmp["normal"] = { m.vertices.at(i).normal[0] ,  m.vertices.at(i).normal[1] , m.vertices.at(i).normal[2] };
-		tmp["edge"] = m.vertices.at(i).edge;
+	  /* Dump Mesh For FBXSDK */
+    if(a.dumpMesh) {
+      cout << "Dump Mesh" << endl;
 
-		j.push_back(tmp);
-	}
+      fstream file;
+	    int s = m.vertices.size();
+	    json j;
 
-  if(a.dumpMesh) {
-    fstream file;
+	    for(int i = 0; i < s ; ++ i){
+	    	/* Dump Mesh */
+        json tmp;
+	    	tmp["pos"] = { m.vertices.at(i).pos[0] ,  m.vertices.at(i).pos[1] , m.vertices.at(i).pos[2] };
+	    	tmp["normal"] = { m.vertices.at(i).normal[0] ,  m.vertices.at(i).normal[1] , m.vertices.at(i).normal[2] };
+	    	tmp["edge"] = m.vertices.at(i).edge;
 
-    cout << "Dump Mesh" << endl;
-    file.open("mesh.json", ios::out);
-    file << j.dump();
-    file.close();
-  }
+	    	j.push_back(tmp);
+	    }
 
-
-	/* End of Adds */
+      file.open("mesh.json", ios::out);
+      file << j.dump();
+      file.close();
+    }
+	  /* End of Dump Mesh */
 
     Skeleton given = a.skeleton;
     given.scale(a.skelScale * 0.7);
