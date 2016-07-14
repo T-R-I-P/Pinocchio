@@ -37,6 +37,8 @@ using json = nlohmann::json;
 
 #define MESH_VERTICES_OUTPUT_FILENAME "_Dump/teddy.json"
 #define MESH_POLYGON_OUTPUT_FILENAME "_Dump/teddy_poly.json"
+#define SKELETON_OUTPUT_FILENAME "_Dump/skeleton.json"
+#define WEIGHT_OUTPUT_FILENAME "_Dump/weight.json"
 
 struct ArgData
 {
@@ -186,6 +188,35 @@ void dumpMesh(Mesh &m)
 	
 	return ;
 }
+void dumpSkeleton(PinocchioOutput &o, Mesh &m, ArgData &a){
+
+	//output skeleton embedding
+	json j;
+	for(int i = 0; i < (int)o.embedding.size(); ++i){
+		json tmp;
+		o.embedding[i] = (o.embedding[i] - m.toAdd) / m.scale;
+		tmp = { i, o.embedding[i][0], o.embedding[i][1], o.embedding[i][2], a.skeleton.fPrev()[i] };
+		j.push_back(tmp);
+	}
+	ofstream os(SKELETON_OUTPUT_FILENAME);
+	os << j.dump() << endl;
+	os.close();
+
+	//output attachment
+	json j2;
+	for(int i = 0; i < (int)m.vertices.size(); ++i) {
+		json tmp;
+		Vector<double, -1> v = o.attachment->getWeights(i);
+		for(int j = 0; j < v.size(); ++j) {
+			double d = floor(0.5 + v[j] * 10000.) / 10000.;
+			tmp.push_back(d);
+		}
+		j2.push_back(tmp);
+	}
+	ofstream os2(WEIGHT_OUTPUT_FILENAME);
+	os2 << j2.dump() << endl;
+	os2.close();
+}
 
 void process(const vector<string> &args, MyWindow *w)
 {
@@ -209,7 +240,7 @@ void process(const vector<string> &args, MyWindow *w)
 	/* Adds */
 	dumpMesh(m);
 	/* End of Adds */
-
+	
 	Skeleton given = a.skeleton;
 	given.scale(a.skelScale * 0.7);
 
@@ -253,34 +284,13 @@ void process(const vector<string> &args, MyWindow *w)
 		}
 	}
 
-	//output skeleton embedding
-	for(i = 0; i < (int)o.embedding.size(); ++i)
-		o.embedding[i] = (o.embedding[i] - m.toAdd) / m.scale;
-	ofstream os("skeleton.out");
-	for(i = 0; i < (int)o.embedding.size(); ++i) {
-		os << i << " " << o.embedding[i][0] << " " << o.embedding[i][1] <<
-			" " << o.embedding[i][2] << " " << a.skeleton.fPrev()[i] << endl;
-	}
-
-	//output attachment
-	std::ofstream astrm("attachment.out");
-	for(i = 0; i < (int)m.vertices.size(); ++i) {
-		Vector<double, -1> v = o.attachment->getWeights(i);
-		for(int j = 0; j < v.size(); ++j) {
-			double d = floor(0.5 + v[j] * 10000.) / 10000.;
-			astrm << d << " ";
-		}
-		astrm << endl;
-	}
-
-	// output format
-	if(a.outputFbx) {
-		cout << "Output FBX" << endl;
-		w->dumpFile();
-		exit(0);
-	}else {
-		cout << "Nothing" << endl;
-	}
+	/* Adds */
+	dumpSkeleton(o,m,a);
+	/* End of Adds */
 
 	delete o.attachment;
+
+	/* Adds */
+	exit(0);
+	/* End of Adds */
 }
