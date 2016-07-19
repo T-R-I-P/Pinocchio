@@ -171,7 +171,7 @@ void dumpMesh(Mesh &m)
 	for(unsigned int i = 0; i < m.edges.size() ; ++ i){
 		poly.push_back(m.edges.at(i).vertex);
 	}
-	
+
 	std::ofstream outputFile(fileName);
 	if(outputFile)
 		outputFile << j.dump() << endl;
@@ -185,7 +185,7 @@ void dumpMesh(Mesh &m)
 	else
 		std::cout << "error when dumping infos" << std::endl;
 	outputFile2.close();
-	
+
 	return ;
 }
 void dumpSkeleton(PinocchioOutput &o, Mesh &m, ArgData &a){
@@ -240,7 +240,7 @@ void process(const vector<string> &args, MyWindow *w)
 	/* Adds */
 	dumpMesh(m);
 	/* End of Adds */
-	
+
 	Skeleton given = a.skeleton;
 	given.scale(a.skelScale * 0.7);
 
@@ -291,6 +291,6 @@ void process(const vector<string> &args, MyWindow *w)
 	delete o.attachment;
 
 	/* Adds */
-	exit(0);
+	//exit(0);
 	/* End of Adds */
 }

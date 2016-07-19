@@ -137,10 +137,36 @@ void Skeleton::setFat(const string &name)
 
 HumanSkeleton::HumanSkeleton()
 {
+    /*
     //order of makeJoint calls is very important
     makeJoint("shoulders",  Vector3(0., 0.5, 0.));                          //0
     makeJoint("back",       Vector3(0., 0.15, 0.),      "shoulders");       //1
     makeJoint("hips",       Vector3(0., 0., 0.),        "back");            //2
+    makeJoint("head",       Vector3(0., 0.7, 0.),       "shoulders");       //3
+    
+    makeJoint("lthigh",     Vector3(-0.1, 0., 0.),      "hips");            //4
+    makeJoint("lknee",      Vector3(-0.15, -0.35, 0.),  "lthigh");          //5
+    makeJoint("lankle",      Vector3(-0.15, -0.8, 0.),  "lknee");           //6
+    makeJoint("lfoot",      Vector3(-0.15, -0.8, 0.1),  "lankle");          //7
+    
+    makeJoint("rthigh",     Vector3(0.1, 0., 0.),       "hips");            //8
+    makeJoint("rknee",      Vector3(0.15, -0.35, 0.),   "rthigh");          //9
+    makeJoint("rankle",      Vector3(0.15, -0.8, 0.),   "rknee");           //10
+    makeJoint("rfoot",      Vector3(0.15, -0.8, 0.1),   "rankle");          //11
+    
+    makeJoint("lshoulder",  Vector3(-0.2, 0.5, 0.),     "shoulders");       //12
+    makeJoint("lelbow",     Vector3(-0.4, 0.25, 0.075), "lshoulder");       //13
+    makeJoint("lhand",      Vector3(-0.6, 0.0, 0.15),   "lelbow");          //14
+    
+    makeJoint("rshoulder",  Vector3(0.2, 0.5, 0.),      "shoulders");       //15
+    makeJoint("relbow",     Vector3(0.4, 0.25, 0.075),  "rshoulder");       //16
+    makeJoint("rhand",      Vector3(0.6, 0.0, 0.15),    "relbow");          //17
+    */
+
+    //order of makeJoint calls is very important
+    makeJoint("hips",       Vector3(0., 0., 0.));                           //2
+    makeJoint("back",       Vector3(0., 0.15, 0.),      "hips");            //1
+    makeJoint("shoulders",  Vector3(0., 0.5, 0.),       "back");            //0
     makeJoint("head",       Vector3(0., 0.7, 0.),       "shoulders");       //3
     
     makeJoint("lthigh",     Vector3(-0.1, 0., 0.),      "hips");            //4
