@@ -194,7 +194,7 @@ void dumpSkeleton(PinocchioOutput &o, Mesh &m, ArgData &a){
 	json j;
 	for(int i = 0; i < (int)o.embedding.size(); ++i){
 		json tmp;
-		o.embedding[i] = (o.embedding[i] - m.toAdd) / m.scale;
+		//o.embedding[i] = (o.embedding[i] - m.toAdd) / m.scale;
 		tmp = { i, o.embedding[i][0], o.embedding[i][1], o.embedding[i][2], a.skeleton.fPrev()[i] };
 		j.push_back(tmp);
 	}
