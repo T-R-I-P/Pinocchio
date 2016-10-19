@@ -34,3 +34,5 @@ AttachWeights/AttachWeights
 AttachWeights/AttachWeights.exe
 AttachWeights/AttachWeightsMac
 AttachWeights/AttachWeightsLinux
+*.json
+DemoUI/DemoUI

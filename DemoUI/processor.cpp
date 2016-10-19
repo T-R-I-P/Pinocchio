@@ -291,6 +291,6 @@ void process(const vector<string> &args, MyWindow *w)
 	delete o.attachment;
 
 	/* Adds */
-	//exit(0);
+	exit(0);
 	/* End of Adds */
 }
